@@ -1,0 +1,58 @@
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --background: #f0f5f1;
+  --foreground: #202b23;
+  --brand-green: #07883f;
+  --border-color: #dce6de;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: #c8ead5;
+  color: #153c25;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
