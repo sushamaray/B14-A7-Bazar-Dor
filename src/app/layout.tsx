@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
@@ -18,10 +17,7 @@ export default function RootLayout({
     <html lang="bn" data-theme="light">
       <body>
         {children}
-        <Toaster
-          position="top-center"
-          reverseOrder={false}
-        />
+        <Toaster position="top-center" reverseOrder={false} />
       </body>
     </html>
   );

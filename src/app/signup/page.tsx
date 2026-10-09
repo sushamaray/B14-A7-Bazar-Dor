@@ -1,176 +1,92 @@
-
-"use client";
-
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { authClient } from "@/lib/auth-client";
 
-export default function SignUpPage() {
-  const router = useRouter();
+import Navbar from "@/components/Navbar";
+import SignupForm from "./SignupForm";
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+import { getCategories, getProducts } from "@/lib/api";
+import {
+  formatPrice,
+  getChangeLabel,
+} from "@/lib/utils";
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+import type { Product } from "@/types";
 
-    if (name.trim().length < 2) {
-      toast.error("নাম অন্তত ২ অক্ষরের হতে হবে।");
-      return;
-    }
+export default async function SignupPage() {
+  let products: Product[] = [];
+  let categories: Awaited<
+    ReturnType<typeof getCategories>
+  > = [];
 
-    if (password.length < 8) {
-      toast.error("পাসওয়ার্ড অন্তত ৮ অক্ষরের হতে হবে।");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error("দুটি পাসওয়ার্ড মিলছে না।");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const result = await authClient.signUp.email({
-        name: name.trim(),
-        email: email.trim(),
-        password,
-      });
-
-      if (result.error) {
-        toast.error(result.error.message || "Account তৈরি করা যায়নি।");
-        return;
-      }
-
-      toast.success("Account তৈরি হয়েছে!");
-      router.push("/");
-      router.refresh();
-    } catch {
-      toast.error("কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করো।");
-    } finally {
-      setLoading(false);
-    }
+  try {
+    [products, categories] = await Promise.all([
+      getProducts(),
+      getCategories(),
+    ]);
+  } catch {
+    // Signup form should remain accessible if the price API fails.
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f0f5f1] px-4 py-10">
-      <section className="w-full max-w-md rounded-3xl border border-green-100 bg-white p-6 shadow-sm sm:p-9">
+    <main className="min-h-screen bg-[#f0f5f1]">
+      <Navbar categories={categories} />
+
+      {/* Price ticker */}
+      {products.length > 0 && (
+        <div className="overflow-hidden border-b border-green-100 bg-green-950 py-2.5 text-white">
+          <div className="animate-marquee flex w-max whitespace-nowrap">
+            {[0, 1].map((copy) => (
+              <div key={copy} className="flex shrink-0">
+                {products.map((product) => (
+                  <Link
+                    key={`${copy}-${product.id}`}
+                    href={`/product/${product.slug}`}
+                    className="mx-5 text-sm"
+                  >
+                    {product.change.dir === "up" ? (
+                      <span className="text-red-300">▲</span>
+                    ) : product.change.dir === "down" ? (
+                      <span className="text-green-300">▼</span>
+                    ) : (
+                      <span>•</span>
+                    )}{" "}
+                    {product.nameBn}: ৳
+                    {formatPrice(product.today)}{" "}
+                    <span className="text-xs opacity-80">
+                      {getChangeLabel(product.change.pct)}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Signup content */}
+      <div className="mx-auto flex min-h-[600px] max-w-6xl flex-col items-center px-4 py-8 sm:py-10">
+        <SignupForm />
+
         <Link
           href="/"
-          className="text-sm font-medium text-green-700 hover:underline"
+          className="mt-5 text-sm text-[#7a857d] transition hover:text-[#07883f]"
         >
           ← হোম পেজে ফিরে যান
         </Link>
+      </div>
 
-        <div className="mt-7 text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-green-700 text-3xl text-white">
-            🛒
-          </div>
-          <h1 className="mt-4 text-3xl font-extrabold">অ্যাকাউন্ট তৈরি করুন</h1>
-          <p className="mt-2 text-sm text-gray-500">
-            বাজারদর সহজে দেখতে যোগ দিন
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <div>
-            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold">
-              আপনার নাম
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              required
-              minLength={2}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="আপনার পুরো নাম"
-              className="input input-bordered w-full bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold">
-              ইমেইল
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@example.com"
-              className="input input-bordered w-full bg-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold">
-              পাসওয়ার্ড
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="অন্তত ৮ অক্ষর"
-              className="input input-bordered w-full bg-white"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="mb-1.5 block text-sm font-semibold"
-            >
-              পাসওয়ার্ড নিশ্চিত করুন
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              placeholder="পাসওয়ার্ড আবার লিখুন"
-              className="input input-bordered w-full bg-white"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn w-full border-green-700 bg-green-700 text-white hover:bg-green-800"
-          >
-            {loading ? "অ্যাকাউন্ট তৈরি হচ্ছে..." : "Sign Up"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-gray-600">
-          আগে থেকেই অ্যাকাউন্ট আছে?{" "}
-          <Link
-            href="/signin"
-            className="font-semibold text-green-700 hover:underline"
-          >
-            Sign In
+      {/* Footer */}
+      <footer className="mt-8 border-t border-[#dce6de] bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
+          <Link href="/" className="font-bold text-green-800">
+            🛒 বাজার দর
           </Link>
-        </p>
-      </section>
+
+          <p>প্রয়োজনীয় পণ্যের দাম এক নজরে।</p>
+
+          <p>সকল দাম বাংলাদেশি টাকায় প্রকাশিত।</p>
+        </div>
+      </footer>
     </main>
   );
 }
