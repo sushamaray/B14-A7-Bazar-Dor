@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
+
 type Category = {
   id: string;
   slug: string;
@@ -26,26 +27,29 @@ export default function Navbar({
   const [signingOut, setSigningOut] = useState(false);
 
   async function handleSignOut() {
-    setSigningOut(true);
+  setSigningOut(true);
 
-    try {
-      const result = await authClient.signOut();
+  try {
+    const result = await authClient.signOut();
 
-      if (result.error) {
-        toast.error(result.error.message || "Sign out করা যায়নি।");
-        return;
-      }
-
-      toast.success("সফলভাবে Sign out হয়েছে।");
-      setMenuOpen(false);
-      router.push("/");
-      router.refresh();
-    } catch {
-      toast.error("Sign out করতে সমস্যা হয়েছে।");
-    } finally {
-      setSigningOut(false);
+    if (result.error) {
+      toast.error(
+        result.error.message || "Sign out করা যায়নি।"
+      );
+      return;
     }
+
+    toast.success("সফলভাবে Sign out হয়েছে!");
+    setMenuOpen(false);
+    router.push("/");
+    router.refresh();
+  } catch (error) {
+    console.error("Sign out failed:", error);
+    toast.error("Sign out করতে সমস্যা হয়েছে।");
+  } finally {
+    setSigningOut(false);
   }
+}
 
   return (
     <>
