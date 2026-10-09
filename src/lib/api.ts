@@ -24,10 +24,16 @@ export async function getCategories(): Promise<Category[]> {
   return fetchApi<Category[]>("/categories");
 }
 
-export async function getProductById(
-  id: number | string,
-): Promise<Product> {
-  return fetchApi<Product>(`/products/${id}`);
+
+export async function getProductBySlug(slug: string): Promise<Product> {
+  const products = await getProducts();
+  const product = products.find((item) => item.slug === slug);
+
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  return product;
 }
 
 export async function getProductsByCategory(
