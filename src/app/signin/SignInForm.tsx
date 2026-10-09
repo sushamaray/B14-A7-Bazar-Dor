@@ -71,7 +71,7 @@ export default function SignInForm() {
   const disabled = loading || socialLoading !== null;
 
   return (
-    <section className="mx-auto mt-6 w-full max-w-md rounded-2xl border border-[#dce6de] bg-[#fbfdfb] p-5 sm:p-6">
+    <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
@@ -200,6 +200,6 @@ export default function SignInForm() {
           সাইন আপ করুন
         </Link>
       </p>
-    </section>
+    </>
   );
 }
