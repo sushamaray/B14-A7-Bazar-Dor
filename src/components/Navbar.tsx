@@ -1,9 +1,8 @@
-
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
@@ -26,6 +25,27 @@ export default function Navbar({
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [todayDate, setTodayDate] = useState("");
+
+  useEffect(() => {
+    function updateDate() {
+      const formattedDate = new Intl.DateTimeFormat("bn-BD", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "Asia/Dhaka",
+      }).format(new Date());
+
+      setTodayDate(formattedDate);
+    }
+
+    updateDate();
+
+    const intervalId = setInterval(updateDate, 60_000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -70,8 +90,9 @@ export default function Navbar({
               <span className="block text-lg font-extrabold leading-tight text-[#202b23]">
                 বাজার দর
               </span>
+
               <span className="mt-0.5 block text-[11px] leading-tight text-gray-500">
-                বাংলাদেশের দৈনিক বাজারদর
+                {todayDate || "বাংলাদেশের দৈনিক বাজারদর"}
               </span>
             </span>
           </Link>
@@ -81,6 +102,7 @@ export default function Navbar({
               <p className="text-sm font-bold leading-tight text-green-800">
                 বাংলাদেশের বাজারদর
               </p>
+
               <p className="mt-0.5 text-[11px] text-gray-500">
                 প্রয়োজনীয় পণ্যের দাম এক নজরে
               </p>
@@ -146,6 +168,7 @@ export default function Navbar({
                         <p className="truncate font-semibold text-gray-900">
                           {session.user.name || "User"}
                         </p>
+
                         <p className="truncate text-xs text-gray-500">
                           {session.user.email}
                         </p>
@@ -169,7 +192,9 @@ export default function Navbar({
                         disabled={signingOut}
                         className="mt-1 w-full rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60"
                       >
-                        {signingOut ? "Signing out..." : "↪ Sign Out"}
+                        {signingOut
+                          ? "Signing out..."
+                          : "↪ Sign Out"}
                       </button>
                     </div>
                   </>
