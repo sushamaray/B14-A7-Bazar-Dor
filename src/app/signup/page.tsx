@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import Navbar from "@/components/Navbar";
@@ -10,13 +9,11 @@ import {
   getChangeLabel,
 } from "@/lib/utils";
 
-import type { Product } from "@/types";
+import type { Category, Product } from "@/types";
 
 export default async function SignupPage() {
   let products: Product[] = [];
-  let categories: Awaited<
-    ReturnType<typeof getCategories>
-  > = [];
+  let categories: Category[] = [];
 
   try {
     [products, categories] = await Promise.all([
@@ -28,7 +25,7 @@ export default async function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f0f5f1]">
+    <main className="flex min-h-screen flex-col bg-[#f0f5f1]">
       <Navbar categories={categories} />
 
       {/* Price ticker */}
@@ -50,8 +47,7 @@ export default async function SignupPage() {
                     ) : (
                       <span>•</span>
                     )}{" "}
-                    {product.nameBn}: ৳
-                    {formatPrice(product.today)}{" "}
+                    {product.nameBn}: ৳{formatPrice(product.today)}{" "}
                     <span className="text-xs opacity-80">
                       {getChangeLabel(product.change.pct)}
                     </span>
@@ -64,7 +60,7 @@ export default async function SignupPage() {
       )}
 
       {/* Signup content */}
-      <div className="mx-auto flex min-h-[600px] max-w-6xl flex-col items-center px-4 py-8 sm:py-10">
+      <div className="mx-auto flex min-h-[600px] w-full max-w-6xl flex-1 flex-col items-center px-4 py-8 sm:py-10">
         <SignupForm />
 
         <Link
@@ -76,15 +72,18 @@ export default async function SignupPage() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-8 border-t border-[#dce6de] bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-7 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
-          <Link href="/" className="font-bold text-green-800">
-            🛒 বাজার দর
+      <footer className="mt-auto border-t border-[#dce6de] bg-[#fbfdfb]">
+        <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-5 text-xs text-gray-600 sm:flex-row sm:items-center sm:justify-between sm:text-sm">
+          <Link
+            href="/"
+            className="font-medium text-[#202b23] hover:text-green-700"
+          >
+            বাজার দর — প্রয়োজনীয় পণ্যের দাম এক নজরে।
           </Link>
 
-          <p>প্রয়োজনীয় পণ্যের দাম এক নজরে।</p>
-
-          <p>সকল দাম বাংলাদেশি টাকায় প্রকাশিত।</p>
+          <p>
+            সকল দাম সময়ান্তর; বাজার অবস্থার উপর নির্ভর করে পরিবর্তিত হয়।
+          </p>
         </div>
       </footer>
     </main>

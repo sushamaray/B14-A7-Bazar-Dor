@@ -1,9 +1,15 @@
-
 import Image from "next/image";
 import Link from "next/link";
+
 import Navbar from "@/components/Navbar";
+
 import { getCategories, getProducts } from "@/lib/api";
-import { formatPrice, getChangeLabel, getUnitLabel } from "@/lib/utils";
+import {
+  formatPrice,
+  getChangeLabel,
+  getUnitLabel,
+} from "@/lib/utils";
+
 import type { Product } from "@/types";
 
 function ProductCard({ product }: { product: Product }) {
@@ -28,6 +34,7 @@ function ProductCard({ product }: { product: Product }) {
           <h3 className="truncate text-sm font-bold text-[#202b23] group-hover:text-green-700">
             {product.nameBn}
           </h3>
+
           <p className="mt-0.5 text-xs text-gray-500">
             {getUnitLabel(product.unit)}
           </p>
@@ -37,6 +44,7 @@ function ProductCard({ product }: { product: Product }) {
       <div className="mt-3 flex items-end justify-between gap-2">
         <div>
           <p className="text-xs text-gray-500">আজকের দাম</p>
+
           <p className="mt-0.5 text-lg font-extrabold leading-tight text-[#202b23]">
             ৳{formatPrice(product.today)}
           </p>
@@ -82,7 +90,7 @@ export default async function HomePage() {
     .slice(0, 6);
 
   return (
-    <main className="min-h-screen bg-[#f0f5f1]">
+    <main className="flex min-h-screen flex-col bg-[#f0f5f1]">
       <Navbar categories={categories} />
 
       {/* Price ticker */}
@@ -100,6 +108,7 @@ export default async function HomePage() {
                     <span>{product.image}</span>
                     <span>{product.nameBn}</span>
                     <span>৳{formatPrice(product.today)}</span>
+
                     {product.change.dir === "up" ? (
                       <span className="font-semibold text-red-600">
                         ▲ {getChangeLabel(product.change.pct)}
@@ -119,7 +128,7 @@ export default async function HomePage() {
         </div>
       )}
 
-      <div className="mx-auto max-w-5xl px-4 py-5 sm:py-6">
+      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-5 sm:py-6">
         {/* Hero */}
         <section className="overflow-hidden rounded-2xl border border-[#e1eae2] bg-[#fbfdfb]">
           <div className="grid items-center gap-3 px-5 py-5 sm:grid-cols-[1.45fr_0.75fr] sm:gap-5 sm:px-7 sm:py-6">
@@ -243,7 +252,7 @@ export default async function HomePage() {
 
               {categories.map((category) => {
                 const categoryProducts = products.filter(
-                  (product) => product.category === category.id
+                  (product) => product.category === category.id,
                 );
 
                 if (categoryProducts.length === 0) {
@@ -289,15 +298,18 @@ export default async function HomePage() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-9 border-t border-[#dce6de] bg-white">
+      <footer className="mt-auto border-t border-[#dce6de] bg-[#fbfdfb]">
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-5 text-xs text-gray-600 sm:flex-row sm:items-center sm:justify-between sm:text-sm">
-          <Link href="/" className="font-bold text-green-800">
-            🛒 বাজার দর
+          <Link
+            href="/"
+            className="font-medium text-[#202b23] hover:text-green-700"
+          >
+            বাজার দর — প্রয়োজনীয় পণ্যের দাম এক নজরে।
           </Link>
 
-          <p>প্রয়োজনীয় পণ্যের দাম এক নজরে।</p>
-
-          <p>সকল দাম বাংলাদেশি টাকায় প্রকাশিত।</p>
+          <p>
+            সকল দাম সময়ান্তর; বাজার অবস্থার উপর নির্ভর করে পরিবর্তিত হয়।
+          </p>
         </div>
       </footer>
     </main>
