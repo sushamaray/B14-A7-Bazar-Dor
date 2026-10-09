@@ -1,5 +1,4 @@
-﻿
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/api";
 import {
@@ -15,13 +14,10 @@ type Props = {
 export default async function ProductDetailsPage({ params }: Props) {
   const { slug } = await params;
 
-
   let product;
 
   try {
     product = await getProductBySlug(slug);
-
-    // Temporary debugging: verify the exact product data received by this page.
   } catch (error) {
     console.error("PRODUCT FETCH ERROR:", error);
     notFound();
@@ -36,9 +32,9 @@ export default async function ProductDetailsPage({ params }: Props) {
       : product.today;
 
   const historicalPrices = [
-    { label: "à¦—à¦¤à¦•à¦¾à¦²", price: product.yesterday },
-    { label: "à¦—à¦¤ à¦¸à¦ªà§à¦¤à¦¾à¦¹", price: product.lastWeek },
-    { label: "à¦—à¦¤ à¦®à¦¾à¦¸", price: product.lastMonth },
+    { label: "গতকাল", price: product.yesterday },
+    { label: "গত সপ্তাহ", price: product.lastWeek },
+    { label: "গত মাস", price: product.lastMonth },
   ];
 
   return (
@@ -47,7 +43,7 @@ export default async function ProductDetailsPage({ params }: Props) {
         href="/"
         className="text-sm font-medium text-green-700 hover:underline"
       >
-        â† à¦¹à§‹à¦® à¦ªà§‡à¦œà§‡ à¦«à¦¿à¦°à§‡ à¦¯à¦¾à¦¨
+        ← হোম পেজে ফিরে যান
       </Link>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
@@ -71,12 +67,12 @@ export default async function ProductDetailsPage({ params }: Props) {
 
         <div className="rounded-3xl border border-green-100 bg-white p-6 sm:p-8">
           <p className="text-sm font-medium text-green-700">
-            à¦†à¦œà¦•à§‡à¦° à¦¬à¦¾à¦œà¦¾à¦°à¦¦à¦°
+            আজকের বাজারদর
           </p>
 
           <div className="mt-3 flex flex-wrap items-end gap-3">
             <h2 className="text-4xl font-extrabold text-green-800">
-              à§³{formatPrice(product.today)}
+              ৳{formatPrice(product.today)}
             </h2>
 
             <span
@@ -93,17 +89,17 @@ export default async function ProductDetailsPage({ params }: Props) {
           </div>
 
           <p className="mt-2 text-sm text-gray-500">
-            {getUnitLabel(product.unit)} à¦¹à¦¿à¦¸à¦¾à¦¬à§‡
+            {getUnitLabel(product.unit)} হিসাবে
           </p>
 
           <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-green-50 p-4">
               <p className="text-sm text-gray-600">
-                à¦¸à¦°à§à¦¬à¦¨à¦¿à¦®à§à¦¨ à¦¬à¦¾à¦œà¦¾à¦°à¦¦à¦°
+                সর্বনিম্ন বাজারদর
               </p>
 
               <p className="mt-1 text-xl font-bold">
-                à§³
+                ৳
                 {formatPrice(
                   product.markets.length
                     ? Math.min(
@@ -116,11 +112,11 @@ export default async function ProductDetailsPage({ params }: Props) {
 
             <div className="rounded-xl bg-green-50 p-4">
               <p className="text-sm text-gray-600">
-                à¦¸à¦°à§à¦¬à§‹à¦šà§à¦š à¦¬à¦¾à¦œà¦¾à¦°à¦¦à¦°
+                সর্বোচ্চ বাজারদর
               </p>
 
               <p className="mt-1 text-xl font-bold">
-                à§³
+                ৳
                 {formatPrice(
                   product.markets.length
                     ? Math.max(
@@ -132,18 +128,22 @@ export default async function ProductDetailsPage({ params }: Props) {
             </div>
 
             <div className="rounded-xl bg-blue-50 p-4">
-              <p className="text-sm text-gray-600">à¦—à§œ à¦¬à¦¾à¦œà¦¾à¦°à¦¦à¦°</p>
+              <p className="text-sm text-gray-600">
+                গড় বাজারদর
+              </p>
 
               <p className="mt-1 text-xl font-bold">
-                à§³{formatPrice(averagePrice)}
+                ৳{formatPrice(averagePrice)}
               </p>
             </div>
 
             <div className="rounded-xl bg-amber-50 p-4">
-              <p className="text-sm text-gray-600">à¦—à¦¤à¦•à¦¾à¦²à§‡à¦° à¦¦à¦¾à¦®</p>
+              <p className="text-sm text-gray-600">
+                গতকালের দাম
+              </p>
 
               <p className="mt-1 text-xl font-bold">
-                à§³{formatPrice(product.yesterday)}
+                ৳{formatPrice(product.yesterday)}
               </p>
             </div>
           </div>
@@ -153,10 +153,10 @@ export default async function ProductDetailsPage({ params }: Props) {
       {/* Historical Price Comparison */}
       <section className="mt-8 rounded-3xl border border-green-100 bg-white p-5 sm:p-8">
         <div>
-          <h2 className="text-2xl font-bold">à¦¦à¦¾à¦®à§‡à¦° à¦¤à§à¦²à¦¨à¦¾</h2>
+          <h2 className="text-2xl font-bold">দামের তুলনা</h2>
 
           <p className="mt-2 text-sm text-gray-500">
-            à¦¬à¦¿à¦­à¦¿à¦¨à§à¦¨ à¦¸à¦®à§Ÿà§‡à¦° à¦¬à¦¾à¦œà¦¾à¦°à¦¦à¦°à§‡à¦° à¦¤à§à¦²à¦¨à¦¾
+            বিভিন্ন সময়ের বাজারদরের তুলনা
           </p>
         </div>
 
@@ -179,7 +179,7 @@ export default async function ProductDetailsPage({ params }: Props) {
                 </p>
 
                 <p className="mt-2 text-2xl font-bold">
-                  à§³{formatPrice(item.price)}
+                  ৳{formatPrice(item.price)}
                 </p>
 
                 <p
@@ -192,20 +192,20 @@ export default async function ProductDetailsPage({ params }: Props) {
                   }`}
                 >
                   {percentage === null
-                    ? "à¦¤à§à¦²à¦¨à¦¾à¦° à¦œà¦¨à§à¦¯ à¦†à¦—à§‡à¦° à¦¦à¦¾à¦®à§‡à¦° à¦¤à¦¥à§à¦¯ à¦¨à§‡à¦‡"
+                    ? "তুলনার জন্য আগের দামের তথ্য নেই"
                     : (
                         <>
                           {difference > 0
-                            ? "â–² "
+                            ? "▲ "
                             : difference < 0
-                              ? "â–¼ "
-                              : "â€” "}
+                              ? "▼ "
+                              : "— "}
                           {formatPrice(Math.abs(percentage))}%{" "}
                           {difference > 0
-                            ? "à¦¬à§ƒà¦¦à§à¦§à¦¿"
+                            ? "বৃদ্ধি"
                             : difference < 0
-                              ? "à¦¹à§à¦°à¦¾à¦¸"
-                              : "à¦ªà¦°à¦¿à¦¬à¦°à§à¦¤à¦¨ à¦¨à§‡à¦‡"}
+                              ? "হ্রাস"
+                              : "পরিবর্তন নেই"}
                         </>
                       )}
                 </p>
@@ -219,15 +219,15 @@ export default async function ProductDetailsPage({ params }: Props) {
       <section className="mt-8 rounded-3xl border border-green-100 bg-white p-5 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-bold">à¦¬à¦¾à¦œà¦¾à¦°à¦­à¦¿à¦¤à§à¦¤à¦¿à¦• à¦¦à¦¾à¦®</h2>
+            <h2 className="text-2xl font-bold">বাজারভিত্তিক দাম</h2>
 
             <p className="mt-2 text-sm text-gray-500">
-              à¦¬à¦¿à¦­à¦¿à¦¨à§à¦¨ à¦¬à¦¾à¦œà¦¾à¦°à§‡à¦° à¦¸à¦°à§à¦¬à¦¨à¦¿à¦®à§à¦¨ à¦“ à¦¸à¦°à§à¦¬à§‹à¦šà§à¦š à¦¦à¦¾à¦®
+              বিভিন্ন বাজারের সর্বনিম্ন ও সর্বোচ্চ দাম
             </p>
           </div>
 
           <span className="rounded-full bg-green-50 px-3 py-1 text-sm text-green-800">
-            {product.markets.length}à¦Ÿà¦¿ à¦¬à¦¾à¦œà¦¾à¦°
+            {formatPrice(product.markets.length)}টি বাজার
           </span>
         </div>
 
@@ -235,10 +235,10 @@ export default async function ProductDetailsPage({ params }: Props) {
           <table className="table">
             <thead>
               <tr>
-                <th>à¦¬à¦¾à¦œà¦¾à¦°à§‡à¦° à¦¨à¦¾à¦®</th>
-                <th>à¦¬à¦¿à¦­à¦¾à¦—</th>
-                <th>à¦¸à¦°à§à¦¬à¦¨à¦¿à¦®à§à¦¨ à¦¦à¦¾à¦®</th>
-                <th>à¦¸à¦°à§à¦¬à§‹à¦šà§à¦š à¦¦à¦¾à¦®</th>
+                <th>বাজারের নাম</th>
+                <th>বিভাগ</th>
+                <th>সর্বনিম্ন দাম</th>
+                <th>সর্বোচ্চ দাম</th>
               </tr>
             </thead>
 
@@ -249,11 +249,11 @@ export default async function ProductDetailsPage({ params }: Props) {
                   <td>{market.division}</td>
 
                   <td className="font-semibold text-green-800">
-                    à§³{formatPrice(market.min)}
+                    ৳{formatPrice(market.min)}
                   </td>
 
                   <td className="font-semibold text-red-600">
-                    à§³{formatPrice(market.max)}
+                    ৳{formatPrice(market.max)}
                   </td>
                 </tr>
               ))}
@@ -267,7 +267,7 @@ export default async function ProductDetailsPage({ params }: Props) {
           href={`/category/${product.category}`}
           className="btn border-green-700 bg-green-700 text-white hover:bg-green-800"
         >
-          {product.categoryNameBn} à¦•à§à¦¯à¦¾à¦Ÿà¦¾à¦—à¦°à¦¿à¦° à¦¸à¦¬ à¦ªà¦£à§à¦¯ à¦¦à§‡à¦–à§à¦¨ â†’
+          {product.categoryNameBn} ক্যাটাগরির সব পণ্য দেখুন →
         </Link>
       </div>
     </main>
